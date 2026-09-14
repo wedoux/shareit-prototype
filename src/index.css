@@ -22,7 +22,10 @@
   --color-expiring-bg: #fbf1de;
   --color-stale-bg: #f1ede7;
 
-  --color-seeded: #6b6058;
+  /* Deliberately a cool slate, not a shade of ink-muted — it has to read as a
+     different signal (provenance), not as more muted metadata. */
+  --color-seeded: #4d5b6b;
+  --color-seeded-bg: #e7ebef;
 }
 
 @layer base {

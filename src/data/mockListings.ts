@@ -13,23 +13,12 @@
  */
 import { chance, intBetween, mulberry32, pick } from '../lib/rng'
 import type { Listing, ListingAttributeKey } from '../types'
+import { AREAS } from './areas'
 
 const SEED = 20260914
 const LISTING_COUNT = 40
 const EXPIRY_WINDOW_DAYS = 14
 const DAY_MS = 24 * 60 * 60 * 1000
-
-// University catchments named in the brief, with rough real-world coordinates.
-const AREAS: { name: string; coords: [number, number] }[] = [
-  { name: 'Ζωγράφου', coords: [37.9756, 23.7658] },
-  { name: 'Ιλίσια', coords: [37.9784, 23.7669] },
-  { name: 'Γουδί', coords: [37.9808, 23.7581] },
-  { name: 'Καισαριανή', coords: [37.9661, 23.7461] },
-  { name: 'Παγκράτι', coords: [37.9667, 23.7486] },
-  { name: 'Κυψέλη', coords: [38.0022, 23.7364] },
-  { name: 'Αμπελόκηποι', coords: [37.9897, 23.7581] },
-  { name: 'Εξάρχεια', coords: [37.9885, 23.7333] },
-]
 
 // Colloquial, uneven fragments — mixed and matched, not every listing gets all of them.
 const OPENERS = [

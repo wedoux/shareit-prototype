@@ -3,6 +3,7 @@ import type { Language, Listing } from '../types'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 const EXPIRING_WINDOW_DAYS = 3
+const FRESH_WINDOW_DAYS = 2
 
 /** Whole days from `fromMs` to `toMs`, both epoch milliseconds. */
 function daysBetweenMs(fromMs: number, toMs: number): number {
@@ -23,6 +24,26 @@ export function isExpiring(listing: Listing, now: number = Date.now()): boolean 
   if (isExpired(listing, now)) return false
   const daysLeft = daysBetweenMs(now, new Date(listing.expiresAt).getTime())
   return daysLeft <= EXPIRING_WINDOW_DAYS
+}
+
+export type FreshnessState = 'fresh' | 'normal' | 'expiring'
+
+/**
+ * The three visible states a card needs (posted/renewed yesterday must not
+ * look identical to three weeks ago). `freshnessEnabled` is the demo control —
+ * off means "what every failed competitor shipped," so nothing ever reads as
+ * fresh or expiring, only normal.
+ */
+export function freshnessState(
+  listing: Listing,
+  freshnessEnabled: boolean,
+  now: number = Date.now(),
+): FreshnessState {
+  if (!freshnessEnabled) return 'normal'
+  if (isExpiring(listing, now)) return 'expiring'
+  const reference = listing.renewedAt ?? listing.postedAt
+  if (daysSince(reference, now) <= FRESH_WINDOW_DAYS) return 'fresh'
+  return 'normal'
 }
 
 /**

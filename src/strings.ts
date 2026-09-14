@@ -27,8 +27,18 @@ export const strings = {
       expiredCount: (n: number) => `${n} αγγελίες έληξαν πρόσφατα`,
     },
     results: {
-      countInArea: (count: number, area: string) => `${count} δωμάτια στου/στη ${area}`,
+      // areaLabel arrives pre-formed per language — "στου Ζωγράφου" (el) or "Zografou" (en).
+      countInArea: (count: number, areaLabel: string) => `${count} δωμάτια ${areaLabel}`,
+      // Used until the Entry screen supplies a real area filter (build order §9, step 5).
+      countTotal: (count: number) => `${count} διαθέσιμα δωμάτια`,
       thinSupplyNote: 'Δεν είναι πολλά ακόμα.',
+      zeroResults: 'Καμία διαθέσιμη αγγελία αυτή τη στιγμή.',
+      sort: {
+        label: 'Ταξινόμηση',
+        recency: 'Πιο πρόσφατα',
+        price: 'Τιμή',
+        duration: 'Διάρκεια',
+      },
       card: {
         billsIncluded: 'με λογαριασμούς',
         billsExcluded: 'χωρίς λογαριασμούς',
@@ -38,13 +48,14 @@ export const strings = {
         months: (n: number) => (n === 1 ? '1 μήνα' : `${n} μήνες`),
         noPhotos: 'Χωρίς φωτογραφίες',
         photoCount: (n: number) => (n === 1 ? '1 φωτογραφία' : `${n} φωτογραφίες`),
+        seededBadge: 'Από την ομάδα',
         matchBadge: (pct: number) => `${pct}% ταίριασμα`,
         matchBadgeSubtext: 'Φάση 2 — δεν έχει χτιστεί, δεν έχει επικυρωθεί',
       },
     },
     preferencePass: {
-      sheetHeadline: (count: number, area: string) =>
-        `${count} δωμάτια στου/στη ${area}. Τρεις ερωτήσεις και θα δεις αυτά που αξίζει να ανοίξεις.`,
+      sheetHeadline: (count: number, areaLabel: string) =>
+        `${count} δωμάτια ${areaLabel}. Τρεις ερωτήσεις και θα δεις αυτά που αξίζει να ανοίξεις.`,
       questions: {
         billsIncluded: 'Το ενοίκιο να περιλαμβάνει λογαριασμούς;',
         maxFlatmates: 'Θα έμενες με πάνω από δύο άτομα;',
@@ -55,9 +66,6 @@ export const strings = {
       matchHeader: (matching: number, total: number) =>
         `${matching} από ${total} δωμάτια ταιριάζουν με ό,τι μας είπες`,
       inlinePromptExample: 'Αυτό το διαμέρισμα έχει κήπο. Σε νοιάζει αυτό;',
-    },
-    demoPanel: {
-      matchingBadge: 'Φάση 2 — δεν έχει χτιστεί, δεν έχει επικυρωθεί',
     },
   },
   en: {
@@ -79,8 +87,16 @@ export const strings = {
       expiredCount: (n: number) => `${n} listings expired recently`,
     },
     results: {
-      countInArea: (count: number, area: string) => `${count} rooms in ${area}`,
+      countInArea: (count: number, areaLabel: string) => `${count} rooms in ${areaLabel}`,
+      countTotal: (count: number) => `${count} rooms available`,
       thinSupplyNote: 'That is not many yet.',
+      zeroResults: 'No listings available right now.',
+      sort: {
+        label: 'Sort',
+        recency: 'Most recent',
+        price: 'Price',
+        duration: 'Duration',
+      },
       card: {
         billsIncluded: 'bills included',
         billsExcluded: 'bills excluded',
@@ -90,13 +106,14 @@ export const strings = {
         months: (n: number) => (n === 1 ? '1 month' : `${n} months`),
         noPhotos: 'No photos',
         photoCount: (n: number) => (n === 1 ? '1 photo' : `${n} photos`),
+        seededBadge: 'Posted by the team',
         matchBadge: (pct: number) => `${pct}% match`,
         matchBadgeSubtext: 'Phase 2 — not built, not validated',
       },
     },
     preferencePass: {
-      sheetHeadline: (count: number, area: string) =>
-        `${count} rooms in ${area}. Three questions and you'll see the ones worth opening.`,
+      sheetHeadline: (count: number, areaLabel: string) =>
+        `${count} rooms in ${areaLabel}. Three questions and you'll see the ones worth opening.`,
       questions: {
         billsIncluded: 'Bills included in the rent?',
         maxFlatmates: 'Would you share with more than two people?',
@@ -107,9 +124,6 @@ export const strings = {
       matchHeader: (matching: number, total: number) =>
         `${matching} of ${total} rooms match what you've told us`,
       inlinePromptExample: 'This flat has a garden. Does that matter to you?',
-    },
-    demoPanel: {
-      matchingBadge: 'Phase 2 — not built, not validated',
     },
   },
 } satisfies Record<Language, unknown>

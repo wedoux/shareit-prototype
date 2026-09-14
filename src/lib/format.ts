@@ -1,5 +1,11 @@
+import { areaLocative } from '../data/areas'
 import { strings } from '../strings'
 import type { Language, Listing } from '../types'
+
+/** "στου Ζωγράφου" (el, stored/inflected) or "Zografou" (en, no inflection needed). */
+export function areaDisplayLabel(area: string, lang: Language): string {
+  return lang === 'el' ? areaLocative(area) : area
+}
 
 export function formatShortDate(iso: string, lang: Language): string {
   const locale = lang === 'el' ? 'el-GR' : 'en-GB'
