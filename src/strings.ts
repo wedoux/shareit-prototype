@@ -29,6 +29,18 @@ export const strings = {
     results: {
       countInArea: (count: number, area: string) => `${count} δωμάτια στου/στη ${area}`,
       thinSupplyNote: 'Δεν είναι πολλά ακόμα.',
+      card: {
+        billsIncluded: 'με λογαριασμούς',
+        billsExcluded: 'χωρίς λογαριασμούς',
+        availableFrom: (date: string) => `Διαθέσιμο από ${date}`,
+        durationOpenEnded: (min: string) => `από ${min}`,
+        durationRange: (min: string, max: string) => `${min}–${max}`,
+        months: (n: number) => (n === 1 ? '1 μήνα' : `${n} μήνες`),
+        noPhotos: 'Χωρίς φωτογραφίες',
+        photoCount: (n: number) => (n === 1 ? '1 φωτογραφία' : `${n} φωτογραφίες`),
+        matchBadge: (pct: number) => `${pct}% ταίριασμα`,
+        matchBadgeSubtext: 'Φάση 2 — δεν έχει χτιστεί, δεν έχει επικυρωθεί',
+      },
     },
     preferencePass: {
       sheetHeadline: (count: number, area: string) =>
@@ -69,6 +81,18 @@ export const strings = {
     results: {
       countInArea: (count: number, area: string) => `${count} rooms in ${area}`,
       thinSupplyNote: 'That is not many yet.',
+      card: {
+        billsIncluded: 'bills included',
+        billsExcluded: 'bills excluded',
+        availableFrom: (date: string) => `Available from ${date}`,
+        durationOpenEnded: (min: string) => `from ${min}`,
+        durationRange: (min: string, max: string) => `${min}–${max}`,
+        months: (n: number) => (n === 1 ? '1 month' : `${n} months`),
+        noPhotos: 'No photos',
+        photoCount: (n: number) => (n === 1 ? '1 photo' : `${n} photos`),
+        matchBadge: (pct: number) => `${pct}% match`,
+        matchBadgeSubtext: 'Phase 2 — not built, not validated',
+      },
     },
     preferencePass: {
       sheetHeadline: (count: number, area: string) =>

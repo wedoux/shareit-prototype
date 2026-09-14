@@ -1,33 +1,46 @@
 import { DemoControlsPanel } from './components/DemoControlsPanel'
+import { ListingCard } from './components/ListingCard'
 import { DemoControlsProvider, useDemoControls } from './state/DemoControlsContext'
 import { mockListings } from './data/mockListings'
-import { isExpired } from './lib/freshness'
+import { isExpiring } from './lib/freshness'
 
-// Temporary — replaced once the Results screen exists (build order §9, step 4).
-// Useful for eyeballing that the demo controls actually drive state.
-function ScaffoldStatus() {
+// Review checkpoint — the Results card in each state it needs to handle,
+// before the Results screen gets built around it. Replaced once that screen
+// exists (build order §9, step 4).
+function CardPreview() {
   const demo = useDemoControls()
-  const liveCount = mockListings.filter((l) => demo.freshnessEnabled ? !isExpired(l) : true).length
+  const now = Date.now()
+
+  const withPhotos = mockListings.find((l) => l.photos.length > 1)!
+  const singlePhoto = mockListings.find((l) => l.photos.length === 1)!
+  const noPhotos = mockListings.find((l) => l.photos.length === 0)!
+  const expiring = mockListings.find((l) => isExpiring(l))!
+  const openEndedStay = mockListings.find((l) => l.maxStayMonths === null)!
+
+  const samples = [withPhotos, singlePhoto, noPhotos, expiring, openEndedStay]
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-md flex-col gap-3 p-6 font-sans">
-      <h1 className="text-lg font-semibold">ShareIt — scaffold</h1>
-      <p className="text-sm text-ink-muted">
-        Steps 1–3 done: tokens, strings, mock data, freshness helpers, demo controls.
-        Screens come next — this view is just to confirm the wiring.
-      </p>
-      <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
-        <dt className="text-ink-muted">Total mock listings</dt>
-        <dd>{mockListings.length}</dd>
-        <dt className="text-ink-muted">Visible (freshness {demo.freshnessEnabled ? 'on' : 'off'})</dt>
-        <dd>{liveCount}</dd>
-        <dt className="text-ink-muted">Supply control</dt>
-        <dd>{demo.supply}</dd>
-        <dt className="text-ink-muted">Language</dt>
-        <dd>{demo.language}</dd>
-        <dt className="text-ink-muted">Profile preset</dt>
-        <dd>{demo.profilePreset}</dd>
-      </dl>
+    <main className="mx-auto flex min-h-svh max-w-md flex-col gap-4 p-6">
+      <div>
+        <h1 className="text-lg font-semibold">Results card — review</h1>
+        <p className="text-sm text-ink-muted">
+          Five states: multi-photo, single-photo, no photos, expiring (muted), open-ended stay.
+          Toggle language / matching / freshness in the demo panel to see them respond live.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {samples.map((listing) => (
+          <ListingCard
+            key={listing.id}
+            listing={listing}
+            lang={demo.language}
+            matchingPreview={demo.matchingPreview}
+            freshnessEnabled={demo.freshnessEnabled}
+            now={now}
+          />
+        ))}
+      </div>
     </main>
   )
 }
@@ -35,7 +48,7 @@ function ScaffoldStatus() {
 function App() {
   return (
     <DemoControlsProvider>
-      <ScaffoldStatus />
+      <CardPreview />
       <DemoControlsPanel />
     </DemoControlsProvider>
   )
