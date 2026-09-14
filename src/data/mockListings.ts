@@ -11,14 +11,13 @@
  * descriptions vary from a terse line to a paragraph. A prototype with clean
  * data lies about the problem this product exists to solve.
  */
+import { DAY_MS, EXPIRY_WINDOW_DAYS } from '../lib/freshness'
 import { chance, intBetween, mulberry32, pick } from '../lib/rng'
 import type { Listing, ListingAttributeKey } from '../types'
 import { AREAS } from './areas'
 
 const SEED = 20260914
 const LISTING_COUNT = 40
-const EXPIRY_WINDOW_DAYS = 14
-const DAY_MS = 24 * 60 * 60 * 1000
 
 // Colloquial, uneven fragments — mixed and matched, not every listing gets all of them.
 const OPENERS = [

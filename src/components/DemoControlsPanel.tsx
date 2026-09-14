@@ -1,6 +1,6 @@
 import { meta } from '../strings'
 import { useDemoControls } from '../state/DemoControlsContext'
-import type { ProfilePreset } from '../types'
+import type { ClockSetting, ProfilePreset } from '../types'
 
 const t = meta.demoPanel
 
@@ -120,6 +120,16 @@ export function DemoControlsPanel() {
           options={[
             { value: 'el', label: t.language.el },
             { value: 'en', label: t.language.en },
+          ]}
+        />
+        <ToggleGroup<ClockSetting>
+          label={t.clock.label}
+          value={demo.clock}
+          onChange={demo.setClock}
+          options={[
+            { value: 'today', label: t.clock.today },
+            { value: 'day12', label: t.clock.day12 },
+            { value: 'day15', label: t.clock.day15 },
           ]}
         />
       </div>

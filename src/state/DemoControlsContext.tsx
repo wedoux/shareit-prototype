@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type {
+  ClockSetting,
   Language,
   PreferenceAnswers,
   PreferenceAnswerValue,
@@ -7,6 +8,15 @@ import type {
   ProfilePreset,
   SupplyLevel,
 } from '../types'
+
+const DAY_MS = 24 * 60 * 60 * 1000
+
+/** Days added to real time for each Clock setting (§6, added with the lister strand). */
+const CLOCK_OFFSET_DAYS: Record<ClockSetting, number> = {
+  today: 0,
+  day12: 12,
+  day15: 15,
+}
 
 const UNANSWERED: PreferenceAnswers = {
   billsIncluded: { state: 'unanswered' },
@@ -51,6 +61,11 @@ type DemoControlsValue = {
   language: Language
   setLanguage: (value: Language) => void
 
+  /** The reference "now" every freshness helper and screen should use instead of Date.now(). */
+  clock: ClockSetting
+  setClock: (value: ClockSetting) => void
+  now: number
+
   // The preference pass (§5b) shares this context rather than owning its own —
   // the brief calls for it to be "driven by the same context as everything else".
   profilePreset: ProfilePreset
@@ -72,6 +87,7 @@ export function DemoControlsProvider({ children }: { children: ReactNode }) {
   const [freshnessEnabled, setFreshnessEnabled] = useState(true)
   const [matchingPreview, setMatchingPreview] = useState(false)
   const [language, setLanguage] = useState<Language>('el')
+  const [clock, setClock] = useState<ClockSetting>('today')
 
   const [profilePreset, setProfilePreset] = useState<ProfilePreset>('empty')
   const [preferenceAnswers, setPreferenceAnswers] = useState<PreferenceAnswers>(UNANSWERED)
@@ -101,6 +117,9 @@ export function DemoControlsProvider({ children }: { children: ReactNode }) {
       setMatchingPreview,
       language,
       setLanguage,
+      clock,
+      setClock,
+      now: Date.now() + CLOCK_OFFSET_DAYS[clock] * DAY_MS,
       profilePreset,
       applyProfilePreset: (preset) => {
         const canned = PRESET_ANSWERS[preset]
@@ -123,7 +142,7 @@ export function DemoControlsProvider({ children }: { children: ReactNode }) {
         setPassDismissed(true)
       },
     }),
-    [panelOpen, supply, freshnessEnabled, matchingPreview, language, profilePreset, preferenceAnswers, passDismissed],
+    [panelOpen, supply, freshnessEnabled, matchingPreview, language, clock, profilePreset, preferenceAnswers, passDismissed],
   )
 
   return <DemoControlsContext.Provider value={value}>{children}</DemoControlsContext.Provider>

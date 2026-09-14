@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AREAS } from '../data/areas'
 import { entryFiltersToParams, type EntryFilters } from '../lib/entryFilters'
 import { strings } from '../strings'
@@ -127,6 +127,10 @@ export function EntryScreen() {
           {t.submit}
         </button>
       </form>
+
+      <Link to="/post" className="text-center text-sm text-ink-muted underline">
+        {t.haveARoomLink}
+      </Link>
     </main>
   )
 }

@@ -1,16 +1,18 @@
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { ListingCard } from '../components/ListingCard'
 import { PreferencePass } from '../components/PreferencePass'
 import { SortControl } from '../components/SortControl'
-import { coldSupplyIds, mockListings } from '../data/mockListings'
+import { coldSupplyIds } from '../data/mockListings'
 import { applyEntryFilters, parseEntryFilters } from '../lib/entryFilters'
 import { areaDisplayLabel } from '../lib/format'
 import { isExpired } from '../lib/freshness'
+import { combineListings } from '../lib/listings'
 import { filterByPreferences, hasAnyAnswer } from '../lib/preferenceFilter'
 import { sortListings, type SortKey } from '../lib/sortListings'
 import { strings } from '../strings'
 import { useDemoControls } from '../state/DemoControlsContext'
+import { useLister } from '../state/ListerContext'
 
 const THIN_SUPPLY_THRESHOLD = 10
 
@@ -21,20 +23,24 @@ const MIN_LISTINGS_FOR_PREFERENCE_PASS = 8
 
 export function ResultsScreen() {
   const demo = useDemoControls()
+  const lister = useLister()
   const [searchParams] = useSearchParams()
   const [sort, setSort] = useState<SortKey>('recency')
   const [showAll, setShowAll] = useState(false)
-  const now = Date.now()
+  const now = demo.now
 
   const entryFilters = parseEntryFilters(searchParams)
+  const allListings = combineListings(lister.postedListing)
 
-  // Supply candidates, then visibility: with freshness off, expired listings
-  // stay in the list too — that's the point of the control, showing what an
-  // index that never expires looks like (and it grows, not just goes stale —
-  // that growth is the commercial temptation that produced every dead index).
-  const candidates = demo.supply === 'cold' ? mockListings.filter((l) => coldSupplyIds.has(l.id)) : mockListings
-  const withFreshness = candidates.filter((l) => (demo.freshnessEnabled ? !isExpired(l, now) : true))
-  const visible = applyEntryFilters(withFreshness, entryFilters)
+  // Supply candidates, then entry filters (area/budget/duration/free text),
+  // then freshness visibility: with freshness off, expired listings stay in
+  // the list too — that's the point of the control, showing what an index
+  // that never expires looks like (and it grows, not just goes stale — that
+  // growth is the commercial temptation that produced every dead index).
+  const candidates =
+    demo.supply === 'cold' ? allListings.filter((l) => coldSupplyIds.has(l.id) || l === lister.postedListing) : allListings
+  const entryFiltered = applyEntryFilters(candidates, entryFilters)
+  const visible = entryFiltered.filter((l) => (demo.freshnessEnabled ? !isExpired(l, now) : true))
 
   const showPass = visible.length >= MIN_LISTINGS_FOR_PREFERENCE_PASS
   const preferenceActive = hasAnyAnswer(demo.preferenceAnswers) && !showAll
@@ -43,6 +49,11 @@ export function ResultsScreen() {
 
   const t = strings[demo.language]
   const singleAreaLabel = entryFilters.areas.length === 1 ? areaDisplayLabel(entryFilters.areas[0], demo.language) : null
+
+  // §5: an empty result says how many expired rather than pretending the
+  // area is empty — the honest emptiness is the point, not a bug to hide.
+  const expiredCount = entryFiltered.filter((l) => isExpired(l, now)).length
+  const allExpired = demo.freshnessEnabled && entryFiltered.length > 0 && visible.length === 0
 
   return (
     <main className="mx-auto flex min-h-svh max-w-md flex-col gap-4 p-4 pb-56">
@@ -65,18 +76,22 @@ export function ResultsScreen() {
       </header>
 
       {sorted.length === 0 ? (
-        <p className="text-sm text-ink-muted">{t.results.zeroResults}</p>
+        <p className="text-sm text-ink-muted">
+          {allExpired ? `${t.results.zeroResults} ${t.freshness.expiredCount(expiredCount)}` : t.results.zeroResults}
+        </p>
       ) : (
         <ul className="flex flex-col gap-3">
           {sorted.map((listing) => (
             <li key={listing.id}>
-              <ListingCard
-                listing={listing}
-                lang={demo.language}
-                matchingPreview={demo.matchingPreview}
-                freshnessEnabled={demo.freshnessEnabled}
-                now={now}
-              />
+              <Link to={`/listing/${listing.id}`} className="block">
+                <ListingCard
+                  listing={listing}
+                  lang={demo.language}
+                  matchingPreview={demo.matchingPreview}
+                  freshnessEnabled={demo.freshnessEnabled}
+                  now={now}
+                />
+              </Link>
             </li>
           ))}
         </ul>

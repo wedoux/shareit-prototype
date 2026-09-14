@@ -42,3 +42,6 @@ export type PreferenceAnswers = Record<PreferenceQuestionId, PreferenceQuestionS
 
 /** The demo-panel preset for §6's Profile control. Drives PreferenceAnswers, not a separate flag. */
 export type ProfilePreset = 'empty' | 'partial' | 'complete'
+
+/** The Clock control (§6, added with the lister strand) — advances the reference "now". */
+export type ClockSetting = 'today' | 'day12' | 'day15'

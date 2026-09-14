@@ -1,7 +1,9 @@
 import { strings } from '../strings'
 import type { Language, Listing } from '../types'
 
-const DAY_MS = 24 * 60 * 60 * 1000
+export const DAY_MS = 24 * 60 * 60 * 1000
+/** 14 days from the later of postedAt/renewedAt (§5) — the one number the whole prototype turns on. */
+export const EXPIRY_WINDOW_DAYS = 14
 const EXPIRING_WINDOW_DAYS = 3
 const FRESH_WINDOW_DAYS = 2
 
@@ -59,6 +61,14 @@ export function ageLabel(listing: Listing, lang: Language, now: number = Date.no
   if (days <= 0) return isRenewal ? t.renewedToday : t.today
   if (days === 1) return isRenewal ? t.renewedYesterday : t.yesterday
   return isRenewal ? t.renewedDaysAgo(days) : t.daysAgo(days)
+}
+
+/**
+ * Whole days until expiry (negative once past it) — the exact number the
+ * detail screen's expiry line states plainly, per §3a.3.
+ */
+export function daysUntilExpiry(listing: Listing, now: number = Date.now()): number {
+  return daysBetweenMs(now, new Date(listing.expiresAt).getTime())
 }
 
 /** The timestamp default "recency" sort orders by — renewal counts as fresh as a new post. */
