@@ -29,7 +29,7 @@ const PRESET_ANSWERS: Record<ProfilePreset, { answers: PreferenceAnswers; dismis
     answers: {
       billsIncluded: { state: 'answered', value: true },
       maxFlatmates: { state: 'answered', value: false },
-      earliestMove: { state: 'answered', value: 'this-month' },
+      earliestMove: { state: 'answered', value: 'thisMonth' },
     },
     dismissed: true,
   },
@@ -60,6 +60,8 @@ type DemoControlsValue = {
   answerQuestion: (id: PreferenceQuestionId, value: PreferenceAnswerValue) => void
   skipQuestion: (id: PreferenceQuestionId) => void
   dismissPass: () => void
+  /** The escape hatch (§5b): "leaves the full list" — discards any answers, not just the sheet. */
+  justLookDismiss: () => void
 }
 
 const DemoControlsContext = createContext<DemoControlsValue | null>(null)
@@ -116,6 +118,10 @@ export function DemoControlsProvider({ children }: { children: ReactNode }) {
       skipQuestion: (id) =>
         setPreferenceAnswers((prev) => ({ ...prev, [id]: { state: 'skipped' } })),
       dismissPass: () => setPassDismissed(true),
+      justLookDismiss: () => {
+        setPreferenceAnswers(UNANSWERED)
+        setPassDismissed(true)
+      },
     }),
     [panelOpen, supply, freshnessEnabled, matchingPreview, language, profilePreset, preferenceAnswers, passDismissed],
   )
